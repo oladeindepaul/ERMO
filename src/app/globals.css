@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+/* ERMO: bright clinical blue on soft blue-grey, white rounded cards, large tight headlines. */
+@theme {
+  --color-brand: #1f5bff;
+  --color-brand-deep: #1546d6;
+  --color-brand-soft: #e3ebff; /* outlined numerals, chips */
+  --color-mist: #eef2f9; /* page background */
+  --color-card: #ffffff;
+  --color-ink: #0d1220;
+  --color-slate: #6b7385;
+  --color-line: #dde3ee;
+  --color-ok: #0f8a5f;
+  --color-warn: #b7791f;
+  --color-danger: #c62828;
+
+  --font-sans: "Onest Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 1.5rem;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background: var(--color-mist);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    overflow-x: clip;
+  }
+  a,
+  button,
+  select,
+  label {
+    touch-action: manipulation;
+  }
+  ::selection {
+    background: var(--color-brand);
+    color: white;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-[var(--radius-card)] bg-card;
+  }
+  /* Headline style from the reference: big, tight, slightly light. */
+  .display {
+    @apply font-medium leading-[0.95] tracking-[-0.04em];
+  }
+  /* Huge pale outlined numerals ("01", "02") used on service cards. */
+  .numeral {
+    @apply font-light leading-none tracking-[-0.04em] text-transparent;
+    -webkit-text-stroke: 1.5px var(--color-brand-soft);
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1 text-xs font-medium text-brand-deep;
+  }
+  .chip-muted {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-mist px-3 py-1 text-xs font-medium text-slate;
+  }
+  /* Pill button with the round icon "puck" on the right, as in the reference's "Find Doctor". */
+  .btn-pill {
+    @apply inline-flex h-12 items-center gap-3 rounded-full bg-brand pl-6 pr-1.5 text-sm font-medium text-white transition-colors hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-pill-puck {
+    @apply grid size-9 place-items-center rounded-full bg-white text-brand;
+  }
+  .btn {
+    @apply inline-flex h-11 items-center justify-center gap-2 rounded-full bg-brand px-5 text-sm font-medium text-white transition-colors hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-light {
+    @apply inline-flex h-11 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-medium text-brand transition-colors hover:bg-brand-soft disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-ghost {
+    @apply inline-flex h-11 items-center justify-center gap-2 rounded-full border border-line bg-white px-5 text-sm font-medium text-ink transition-colors hover:border-brand hover:text-brand disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-danger {
+    @apply inline-flex h-11 items-center justify-center gap-2 rounded-full border border-danger/30 bg-white px-5 text-sm font-medium text-danger transition-colors hover:bg-danger hover:text-white disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  /* 16px text on phones stops iOS Safari zooming in on focus. */
+  .field {
+    @apply w-full appearance-none rounded-2xl border border-line bg-white px-4 py-3 text-base outline-none transition-colors placeholder:text-slate/70 focus:border-brand md:text-sm;
+  }
+  select.field {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230d1220' stroke-width='1.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    background-size: 14px;
+    padding-right: 2.5rem;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-ink;
+  }
+  .hint {
+    @apply mt-1 text-xs text-slate;
+  }
+  .eyebrow {
+    @apply text-xs font-medium text-slate;
+  }
+}
