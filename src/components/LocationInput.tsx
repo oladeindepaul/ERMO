@@ -192,7 +192,7 @@ export function LocationInput({
       )}
 
       {showUseMyLocation && (
-        <button type="button" onClick={useMyLocation} disabled={locating} className="mt-2 text-sm text-brand hover:underline disabled:opacity-60">
+        <button type="button" onClick={useMyLocation} disabled={locating} className="tap mt-1 text-sm text-brand hover:underline disabled:opacity-60">
           {locating ? "Finding you…" : "Use my current location"}
         </button>
       )}

@@ -35,7 +35,7 @@ export default async function CarerPage({ params }: PageProps<"/carers/[id]">) {
 
   return (
     <div className="mx-auto max-w-7xl px-3 pt-8 sm:px-5">
-      <Link href="/carers" className="mb-4 inline-flex items-center gap-2 text-sm text-slate hover:text-brand">
+      <Link href="/carers" className="mb-2 inline-flex min-h-11 items-center gap-2 text-sm text-slate hover:text-brand">
         <ArrowLeft className="size-4" /> All carers
       </Link>
       {extra.status !== "approved" && (
@@ -64,7 +64,7 @@ export default async function CarerPage({ params }: PageProps<"/carers/[id]">) {
               <VerifiedBadge label="Right to work" on={c.rtw} />
             </div>
 
-            <div className="mt-8 grid grid-cols-3 gap-4 rounded-3xl bg-mist p-5">
+            <div className="mt-8 grid grid-cols-3 gap-2 rounded-3xl bg-mist p-4 sm:gap-4 sm:p-5">
               <Stat value={c.rating ? <span className="flex items-center gap-1">{c.rating}<Star className="size-5 fill-brand" /></span> : "New"} label={`${c.reviews} review${c.reviews === 1 ? "" : "s"}`} />
               <Stat value={c.completed} label="bookings completed on ERMO" />
               <Stat value={c.reliability != null ? `${c.reliability}%` : "–"} label="reliability" />

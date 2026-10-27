@@ -47,7 +47,7 @@ export async function NoMatches({ search, placeNotFound }: { search: SearchParam
 
         <div className="relative">
           <p className="text-xs text-white/70">{placeNotFound ? "{ Place not recognised }" : "{ No matches yet }"}</p>
-          <h1 className="display mt-4 text-5xl sm:text-6xl">
+          <h1 className="display mt-4 text-[2.6rem] sm:text-6xl">
             {placeNotFound ? (
               <>We couldn&apos;t find &ldquo;{where}&rdquo;</>
             ) : where ? (
@@ -135,7 +135,7 @@ export async function NoMatches({ search, placeNotFound }: { search: SearchParam
           <p className="mt-2 text-sm text-slate">
             Self-employed carers set their own rates and keep far more than with an agency. Point them our way, or join yourself.
           </p>
-          <Link href="/become-a-carer" className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-brand hover:underline">
+          <Link href="/become-a-carer" className="tap mt-2 gap-2 text-sm font-medium text-brand hover:underline">
             Become a carer on ERMO <ArrowRight className="size-4" />
           </Link>
         </section>

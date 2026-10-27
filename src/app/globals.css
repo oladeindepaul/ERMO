@@ -54,7 +54,7 @@
   }
   /* Headline style from the reference: big, tight, slightly light. */
   .display {
-    @apply font-medium leading-[0.95] tracking-[-0.04em];
+    @apply font-medium leading-[0.95] tracking-[-0.04em] text-balance break-words;
   }
   /* Huge pale outlined numerals ("01", "02") used on service cards. */
   .numeral {
@@ -69,26 +69,39 @@
   }
   /* Pill button with the round icon "puck" on the right, as in the reference's "Find Doctor". */
   .btn-pill {
-    @apply inline-flex h-12 items-center gap-3 rounded-full bg-brand pl-6 pr-1.5 text-sm font-medium text-white transition-colors hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-12 items-center gap-3 rounded-full bg-brand py-1.5 pl-6 pr-1.5 text-sm font-medium text-white transition-colors hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-pill-puck {
     @apply grid size-9 place-items-center rounded-full bg-white text-brand;
   }
   .btn {
-    @apply inline-flex h-11 items-center justify-center gap-2 rounded-full bg-brand px-5 text-sm font-medium text-white transition-colors hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full py-2 text-center leading-snug bg-brand px-5 text-sm font-medium text-white transition-colors hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-light {
-    @apply inline-flex h-11 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-medium text-brand transition-colors hover:bg-brand-soft disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full py-2 text-center leading-snug bg-white px-5 text-sm font-medium text-brand transition-colors hover:bg-brand-soft disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-ghost {
-    @apply inline-flex h-11 items-center justify-center gap-2 rounded-full border border-line bg-white px-5 text-sm font-medium text-ink transition-colors hover:border-brand hover:text-brand disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full py-2 text-center leading-snug border border-line bg-white px-5 text-sm font-medium text-ink transition-colors hover:border-brand hover:text-brand disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-danger {
-    @apply inline-flex h-11 items-center justify-center gap-2 rounded-full border border-danger/30 bg-white px-5 text-sm font-medium text-danger transition-colors hover:bg-danger hover:text-white disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full py-2 text-center leading-snug border border-danger/30 bg-white px-5 text-sm font-medium text-danger transition-colors hover:bg-danger hover:text-white disabled:cursor-not-allowed disabled:opacity-50;
   }
   /* 16px text on phones stops iOS Safari zooming in on focus. */
   .field {
-    @apply w-full appearance-none rounded-2xl border border-line bg-white px-4 py-3 text-base outline-none transition-colors placeholder:text-slate/70 focus:border-brand md:text-sm;
+    @apply min-h-12 w-full appearance-none rounded-2xl border border-line bg-white px-4 py-3 text-base outline-none transition-colors placeholder:text-slate/70 focus:border-brand md:text-sm;
+  }
+  /* iOS Safari collapses empty date/time inputs and centres their text without these. */
+  input[type="date"].field,
+  input[type="time"].field {
+    @apply block text-left;
+  }
+  input[type="date"].field::-webkit-date-and-time-value,
+  input[type="time"].field::-webkit-date-and-time-value {
+    text-align: left;
+  }
+  /* Small text links still get a finger-sized tap area. */
+  .tap {
+    @apply inline-flex min-h-11 items-center;
   }
   select.field {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230d1220' stroke-width='1.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");

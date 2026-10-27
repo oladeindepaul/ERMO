@@ -30,7 +30,7 @@ export default function HomePage() {
               by you.
             </h1>
             <form action="/carers" className="mt-8 flex max-w-xl flex-col gap-3 sm:flex-row sm:items-start">
-              <LocationInput className="flex-1" placeholder="Where do you need care?" />
+              <LocationInput className="flex-1" placeholder="Town, city or postcode" />
               <button className="btn-pill shrink-0 justify-between">
                 Find a carer
                 <span className="btn-pill-puck"><Search className="size-4" /></span>
@@ -40,7 +40,7 @@ export default function HomePage() {
               <strong className="font-medium text-ink">See who is coming</strong> into your home before you book. No agency in the middle.
             </p>
           </div>
-          <div className="mt-10 grid grid-cols-3 gap-4 rounded-3xl bg-mist p-5">
+          <div className="mt-10 grid grid-cols-3 gap-2 rounded-3xl bg-mist p-4 sm:gap-4 sm:p-5">
             <HeroStat value="3" label="checks before any carer goes live" />
             <HeroStat value="48h" label="to confirm before payment releases" />
             <HeroStat value="100%" label="of reviews from real bookings" />
@@ -64,9 +64,9 @@ export default function HomePage() {
           {/* Product preview: what a client sees on a carer profile */}
           <div className="relative mx-auto mt-10 max-w-sm">
             <div className="card p-5 text-ink shadow-2xl shadow-black/20">
-              <div className="flex items-center gap-4">
+              <div className="flex min-w-0 items-center gap-4">
                 <span className="grid size-16 place-items-center rounded-full bg-brand-soft text-xl font-semibold text-brand-deep">AO</span>
-                <div>
+                <div className="min-w-0">
                   <p className="text-lg font-medium">Adaeze O.</p>
                   <p className="text-sm text-slate">Personal care · Dementia care</p>
                   <p className="mt-1 flex items-center gap-1 text-sm">
@@ -91,7 +91,7 @@ export default function HomePage() {
 
           <div className="relative mt-14 flex items-end justify-between gap-4">
             <p className="max-w-[14rem] text-xs text-white/70">Carers set their own rates and keep far more of what you pay.</p>
-            <Link href="/become-a-carer" className="flex items-center gap-2 text-sm font-medium hover:underline">
+            <Link href="/become-a-carer" className="tap shrink-0 gap-2 text-sm font-medium hover:underline">
               I&apos;m a carer <ArrowRight className="size-4" />
             </Link>
           </div>
@@ -195,7 +195,7 @@ export default function HomePage() {
         <div className="card p-6 sm:p-10">
           <p className="eyebrow">{"{ Advantages }"}</p>
           <h2 className="display mt-4 text-4xl sm:text-5xl">Why families choose ERMO</h2>
-          <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-10">
+          <div className="mt-10 grid gap-x-6 gap-y-8 sm:grid-cols-2 sm:gap-y-10">
             <Why icon={<Shield />} title="Checked against source">
               Enhanced DBS checked through the Update Service, not a photo of a certificate.
             </Why>
@@ -240,7 +240,7 @@ export default function HomePage() {
 function HeroStat({ value, label }: { value: string; label: string }) {
   return (
     <div>
-      <p className="text-3xl font-medium tracking-tight text-brand sm:text-4xl">{value}</p>
+      <p className="text-[1.6rem] font-medium leading-tight tracking-tight text-brand sm:text-4xl">{value}</p>
       <p className="mt-1 text-[11px] leading-tight text-slate sm:text-xs">{label}</p>
     </div>
   );

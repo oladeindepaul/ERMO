@@ -60,7 +60,7 @@ export default async function BookingPage({ params, searchParams }: PageProps<"/
 
   return (
     <div className="mx-auto max-w-5xl px-3 pt-8 sm:px-5">
-      <Link href={isCarer ? "/carer" : isClient ? "/client" : "/admin/payments"} className="mb-4 inline-flex items-center gap-2 text-sm text-slate hover:text-brand">
+      <Link href={isCarer ? "/carer" : isClient ? "/client" : "/admin/payments"} className="mb-2 inline-flex min-h-11 items-center gap-2 text-sm text-slate hover:text-brand">
         <ArrowLeft className="size-4" /> Back
       </Link>
 

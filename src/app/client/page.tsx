@@ -74,7 +74,7 @@ export default async function ClientDashboard() {
                   <p className="font-medium">{r.name} <span className="font-normal text-slate">· {r.relationship}</span></p>
                   {r.needs && <p className="text-slate">{r.needs}</p>}
                 </div>
-                <ActionForm action={removeRecipient} submit="Remove" submitClass="text-xs text-slate hover:text-danger" className="" confirm={`Remove ${r.name}?`}>
+                <ActionForm action={removeRecipient} submit="Remove" submitClass="tap px-1 text-xs text-slate hover:text-danger" className="" confirm={`Remove ${r.name}?`}>
                   <input type="hidden" name="id" value={r.id} />
                 </ActionForm>
               </li>

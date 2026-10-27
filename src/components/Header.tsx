@@ -68,7 +68,7 @@ export function Header({ me }: { me: { role: Role; name: string | null } | null 
               <Link href="/login" className="btn-ghost hidden sm:inline-flex">
                 Log in
               </Link>
-              <Link href="/login?mode=register" className="btn">
+              <Link href="/login?mode=register" className="btn whitespace-nowrap px-4 sm:px-5">
                 Get started
               </Link>
             </>

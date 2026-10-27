@@ -35,13 +35,13 @@ export default async function ConversationPage({ params }: PageProps<"/messages/
 
   return (
     <div className="mx-auto max-w-3xl px-3 pt-8 sm:px-5">
-      <Link href={me.role === "admin" ? "/admin/safeguarding" : "/messages"} className="mb-4 inline-flex items-center gap-2 text-sm text-slate hover:text-brand">
+      <Link href={me.role === "admin" ? "/admin/safeguarding" : "/messages"} className="mb-2 inline-flex min-h-11 items-center gap-2 text-sm text-slate hover:text-brand">
         <ArrowLeft className="size-4" /> Messages
       </Link>
       <div className="card flex h-[calc(100dvh-11rem)] min-h-[28rem] flex-col overflow-hidden">
-        <div className="flex items-center gap-3 border-b border-line px-5 py-4">
+        <div className="flex items-center gap-3 border-b border-line px-4 py-3 sm:px-5 sm:py-4">
           <Avatar name={other.full_name} path={other.avatar_path} size={40} />
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             {me.id === c.client_id ? (
               <Link href={`/carers/${other.id}`} className="font-medium hover:text-brand">{other.full_name}</Link>
             ) : (

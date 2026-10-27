@@ -3,7 +3,7 @@ import { Logo } from "@/components/ui";
 
 export function Footer() {
   return (
-    <footer className="mt-24 px-3 pb-3 sm:px-5 sm:pb-5">
+    <footer className="mt-16 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:mt-24 sm:px-5 sm:pb-5">
       <div className="mx-auto max-w-7xl rounded-[2rem] bg-brand px-6 py-10 text-white sm:px-10">
         <div className="flex flex-wrap items-start justify-between gap-8">
           <div className="max-w-sm">
@@ -12,11 +12,11 @@ export function Footer() {
               ERMO introduces families to verified, self-employed carers and keeps payments safe. Carers set their own rates and choose their own work.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-x-12 gap-y-2 text-sm">
-            <Link href="/carers" className="text-white/80 hover:text-white">Find a carer</Link>
-            <Link href="/become-a-carer" className="text-white/80 hover:text-white">Become a carer</Link>
-            <Link href="/#how" className="text-white/80 hover:text-white">How it works</Link>
-            <Link href="/report" className="text-white/80 hover:text-white">Report a concern</Link>
+          <div className="grid grid-cols-2 gap-x-8 text-sm sm:gap-x-12">
+            <Link href="/carers" className="tap text-white/80 hover:text-white">Find a carer</Link>
+            <Link href="/become-a-carer" className="tap text-white/80 hover:text-white">Become a carer</Link>
+            <Link href="/#how" className="tap text-white/80 hover:text-white">How it works</Link>
+            <Link href="/report" className="tap text-white/80 hover:text-white">Report a concern</Link>
           </div>
         </div>
         <p className="mt-10 border-t border-white/20 pt-6 text-xs text-white/60">

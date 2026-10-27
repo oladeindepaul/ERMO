@@ -103,7 +103,7 @@ export function RemoveDocument({ id, path }: { id: string; path: string | null }
         await supabase.from("carer_documents").delete().eq("id", id);
         router.refresh();
       }}
-      className="text-xs text-slate hover:text-danger"
+      className="tap px-1 text-xs text-slate hover:text-danger"
     >
       {busy ? "Removing…" : "Remove"}
     </button>

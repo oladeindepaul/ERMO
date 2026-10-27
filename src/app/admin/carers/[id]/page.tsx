@@ -29,7 +29,7 @@ export default async function AdminCarer({ params }: PageProps<"/admin/carers/[i
 
   return (
     <>
-      <Link href="/admin/carers" className="mb-4 inline-flex items-center gap-2 text-sm text-slate hover:text-brand">
+      <Link href="/admin/carers" className="mb-2 inline-flex min-h-11 items-center gap-2 text-sm text-slate hover:text-brand">
         <ArrowLeft className="size-4" /> Verification queue
       </Link>
       <PageHeader eyebrow={`Carer · ${cp.status}`} title={p.full_name ?? "Unnamed"} />
@@ -87,7 +87,7 @@ export default async function AdminCarer({ params }: PageProps<"/admin/carers/[i
                       <ActionForm action={adminReviewDocument} submit="Reject" submitClass="btn-danger" className="flex flex-wrap gap-2">
                         <input type="hidden" name="id" value={d.id} />
                         <input type="hidden" name="approve" value="no" />
-                        <input name="note" placeholder="Reason" className="field h-11 w-48 py-2" required />
+                        <input name="note" placeholder="Reason" className="field w-full py-2 sm:w-48" required />
                       </ActionForm>
                     </div>
                   )}

@@ -49,13 +49,13 @@ export function ChatThread({ conversationId, meId, initial, canSend }: { convers
 
   return (
     <>
-      <div className="flex-1 space-y-3 overflow-y-auto bg-mist/50 px-4 py-5" aria-live="polite">
+      <div className="flex-1 space-y-3 overflow-y-auto overscroll-contain bg-mist/50 px-3 py-4 sm:px-4 sm:py-5" aria-live="polite">
         {messages.length === 0 && <p className="py-10 text-center text-sm text-slate">Say hello and ask anything before you book.</p>}
         {messages.map((m) => {
           const mine = m.sender_id === meId;
           return (
             <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
-              <div className={`max-w-[80%] rounded-3xl px-4 py-2.5 text-[15px] ${mine ? "rounded-br-lg bg-brand text-white" : "rounded-bl-lg bg-white"}`}>
+              <div className={`max-w-[85%] rounded-3xl sm:max-w-[80%] px-4 py-2.5 text-[15px] ${mine ? "rounded-br-lg bg-brand text-white" : "rounded-bl-lg bg-white"}`}>
                 <p className="whitespace-pre-wrap break-words">{m.body}</p>
                 <p className={`mt-1 text-[11px] ${mine ? "text-white/70" : "text-slate"}`}>
                   {stamp(m.created_at)}
@@ -68,8 +68,8 @@ export function ChatThread({ conversationId, meId, initial, canSend }: { convers
         <div ref={bottom} />
       </div>
       {canSend ? (
-        <form onSubmit={send} className="flex items-end gap-2 border-t border-line p-3">
-          <label className="flex-1">
+        <form onSubmit={send} className="flex flex-wrap items-end gap-2 border-t border-line p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          <label className="min-w-0 flex-1">
             <span className="sr-only">Message</span>
             <textarea
               value={text}
@@ -87,7 +87,7 @@ export function ChatThread({ conversationId, meId, initial, canSend }: { convers
             />
           </label>
           <button className="btn" disabled={busy || !text.trim()}>Send</button>
-          {error && <p role="alert" className="text-sm text-danger">{error}</p>}
+          {error && <p role="alert" className="w-full text-sm text-danger">{error}</p>}
         </form>
       ) : (
         <p className="border-t border-line px-5 py-3 text-xs text-slate">Read-only: viewing as admin because this conversation was reported or disputed.</p>

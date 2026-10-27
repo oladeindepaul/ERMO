@@ -5,7 +5,7 @@ import { ArrowRight, Shield } from "@/components/Icons";
 
 export function Logo({ light = false }: { light?: boolean }) {
   return (
-    <Link href="/" className="flex items-center gap-2" aria-label="ERMO home">
+    <Link href="/" className="flex min-h-11 shrink-0 items-center gap-2" aria-label="ERMO home">
       <span className={`grid size-9 place-items-center rounded-full ${light ? "bg-white text-brand" : "bg-brand text-white"}`}>
         <svg viewBox="0 0 24 24" className="size-5" fill="currentColor" aria-hidden>
           <path d="M12 20.5s-8-4.9-8-10.9A4.6 4.6 0 0 1 12 6.8a4.6 4.6 0 0 1 8 2.8c0 6-8 10.9-8 10.9z" />
@@ -89,7 +89,7 @@ export function PillLink({ href, children, icon }: { href: string; children: Rea
 export function Stat({ value, label }: { value: React.ReactNode; label: string }) {
   return (
     <div>
-      <p className="text-3xl font-medium tracking-tight text-brand">{value}</p>
+      <p className="text-2xl font-medium tracking-tight text-brand sm:text-3xl">{value}</p>
       <p className="mt-1 text-xs leading-tight text-slate">{label}</p>
     </div>
   );
