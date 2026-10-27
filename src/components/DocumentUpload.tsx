@@ -26,9 +26,10 @@ export function DocumentUpload({ userId }: { userId: string }) {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (!title.trim()) return setError("Add a short description.");
-    if (kind !== "reference" && !file) return setError("Attach the document.");
-    if (file && file.size > 10 * 1024 * 1024) return setError("Files must be under 10 MB.");
+    // MVP: any file or photo is accepted; the description is optional and falls back to the file name.
+    if (kind !== "reference" && !file) return setError("Attach a file or photo.");
+    if (!file && !title.trim()) return setError("Add the referee's name, or attach a file.");
+    if (file && file.size > 25 * 1024 * 1024) return setError("Files must be under 25 MB.");
     setBusy(true);
 
     let path: string | null = null;
@@ -42,7 +43,7 @@ export function DocumentUpload({ userId }: { userId: string }) {
     }
     const { error } = await supabase
       .from("carer_documents")
-      .insert({ carer_id: userId, kind, title: title.trim(), file_path: path, expires_on: expires || null });
+      .insert({ carer_id: userId, kind, title: title.trim() || file?.name || DOC_KINDS[kind], file_path: path, expires_on: expires || null });
     setBusy(false);
     if (error) return setError(error.message);
     setTitle("");
@@ -63,12 +64,12 @@ export function DocumentUpload({ userId }: { userId: string }) {
           </select>
         </label>
         <label className="block">
-          <span className="label">Description</span>
+          <span className="label">Description (optional)</span>
           <input className="field" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={PLACEHOLDER[kind]} />
         </label>
         <label className="block">
-          <span className="label">File {kind === "reference" && "(optional)"}</span>
-          <input type="file" accept="image/*,application/pdf" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="field file:mr-3 file:rounded-full file:border-0 file:bg-brand-soft file:px-3 file:py-1 file:text-brand-deep" />
+          <span className="label">File or photo {kind === "reference" && "(optional)"}</span>
+          <input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="field file:mr-3 file:rounded-full file:border-0 file:bg-brand-soft file:px-3 file:py-1 file:text-brand-deep" />
         </label>
         {(kind === "qualification" || kind === "right_to_work") && (
           <label className="block">
