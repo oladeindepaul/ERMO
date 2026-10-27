@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { getMe, homeFor } from "@/lib/auth";
+import { getMe, landingFor } from "@/lib/auth";
 import { safeNext } from "@/lib/safe-redirect";
 import { LoginForm } from "@/components/LoginForm";
 
@@ -10,7 +10,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const sp = await searchParams;
   const next = safeNext(typeof sp.next === "string" ? sp.next : null, "/home");
   const me = await getMe();
-  if (me) redirect(next === "/home" ? homeFor(me.role) : next);
+  if (me) redirect(next === "/home" || !me.onboarded_at ? landingFor(me) : next);
 
   const error = typeof sp.error === "string" ? sp.error : undefined;
   const mode = sp.mode === "register" ? "register" : "login";

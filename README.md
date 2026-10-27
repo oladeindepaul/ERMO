@@ -15,10 +15,11 @@ Payments are **simulated** (PRD 8.6). Bookings move through the real states (pen
 1. **Create a Supabase project** in the London region (`eu-west-2`).
 2. **Run the schema:** in the Supabase dashboard, go to SQL Editor, choose New query, paste [supabase/schema.sql](supabase/schema.sql), then click Run. It is safe to run again.
 3. **Optional: turn on pg_cron.** Go to Database, then Extensions, enable `pg_cron`, and run the schema again. It then runs auto-release and no-shows every 10 minutes. Without it, the same rules run whenever a dashboard loads.
-4. **Configure Auth:** go to Authentication, then URL Configuration.
-   - Site URL: `http://localhost:3000` (your Vercel URL later).
-   - Redirect URLs: add `http://localhost:3000/auth/callback`.
-   - For quick testing, you can turn off "Confirm email" under Sign In / Providers, then Email.
+4. **Configure Auth.** Sign-in is **Continue with Google**, or email and password. Magic links return once ERMO has its own email sender, such as Zapiack.
+   - **URL Configuration:** set the Site URL to your site (e.g. `http://localhost:3000`, then your Vercel URL). Add `<site>/auth/callback` under Redirect URLs for each site.
+   - **Email:** under Sign In / Providers, then Email, turn off "Confirm email". Supabase's built-in email only reaches your own team.
+   - **Google:** under Sign In / Providers, then Google, enable it and paste a Google OAuth Client ID and secret. In Google Cloud Console, the OAuth client's Authorized redirect URI must be `https://<project-ref>.supabase.co/auth/v1/callback`.
+   - **First Google sign-in:** new Google users choose "Find care" or "Offer care" once, at `/welcome`.
 5. **Add environment variables:** copy `.env.example` to `.env.local` and fill in your values from Project Settings, then API.
 6. **Run the app:**
    ```bash

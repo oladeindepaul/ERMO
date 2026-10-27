@@ -40,6 +40,15 @@ export async function signOut() {
   redirect("/");
 }
 
+export async function chooseRole(_: ActionState, d: FormData): Promise<ActionState> {
+  const role = str(d, "role");
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("choose_role", { p_role: role });
+  if (error) return { error: error.message };
+  revalidatePath("/", "layout");
+  redirect(role === "carer" ? "/carer/profile" : "/carers");
+}
+
 export async function verifyIdentity(): Promise<ActionState> {
   return rpc("simulate_identity_check", {}, "Identity verified (simulated).");
 }

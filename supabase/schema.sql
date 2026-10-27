@@ -258,14 +258,22 @@ returns boolean language sql stable security definer set search_path = public as
                  where (b.client_id = auth.uid() and b.carer_id = p_id) or (b.carer_id = auth.uid() and b.client_id = p_id));
 $$;
 
+-- Set once the person has chosen client or carer. Email sign-ups choose on the form; Google
+-- sign-ups choose on the /welcome screen after their first sign-in.
+alter table public.profiles add column if not exists onboarded_at timestamptz;
+update public.profiles p set onboarded_at = p.created_at
+ where p.onboarded_at is null
+   and (p.role = 'admin' or exists (select 1 from auth.users u where u.id = p.id and u.raw_user_meta_data ? 'role'));
+
 -- New sign-ups pick "client" or "carer". Admin is never self-assigned: promote in SQL (see README).
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = public as $$
 declare
   v_role text := case when new.raw_user_meta_data->>'role' = 'carer' then 'carer' else 'client' end;
 begin
-  insert into public.profiles (id, role, full_name)
-  values (new.id, v_role, coalesce(new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'name'))
+  insert into public.profiles (id, role, full_name, onboarded_at)
+  values (new.id, v_role, coalesce(new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'name'),
+          case when new.raw_user_meta_data ? 'role' then now() end)
   on conflict (id) do nothing;
   if v_role = 'carer' then
     insert into public.carer_profiles (id) values (new.id) on conflict (id) do nothing;
@@ -282,6 +290,22 @@ create trigger on_auth_user_created
 -- ---------------------------------------------------------------------------
 -- Onboarding and verification
 -- ---------------------------------------------------------------------------
+
+-- One-time choice for people who signed up with Google (no form to pick a role on).
+create or replace function public.choose_role(p_role text)
+returns void language plpgsql security definer set search_path = public as $$
+declare v_me profiles%rowtype;
+begin
+  select * into v_me from profiles where id = auth.uid();
+  if v_me.id is null then raise exception 'Please sign in first.'; end if;
+  if v_me.onboarded_at is not null then raise exception 'You have already chosen how you use ERMO.'; end if;
+  if p_role not in ('client', 'carer') then raise exception 'Choose client or carer.'; end if;
+  update profiles set role = p_role, onboarded_at = now() where id = v_me.id;
+  if p_role = 'carer' then
+    insert into carer_profiles (id) values (v_me.id) on conflict (id) do nothing;
+  end if;
+end;
+$$;
 
 -- SIMULATED identity check (document + selfie). Replace with Stripe Identity / Yoti / Onfido later.
 create or replace function public.simulate_identity_check()

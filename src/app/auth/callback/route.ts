@@ -33,5 +33,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(message)}&next=${encodeURIComponent(next)}`);
   }
 
+  // First Google sign-in: choose client or carer before going anywhere else.
+  if (!next.startsWith("/welcome")) {
+    const { data: auth } = await supabase.auth.getUser();
+    const { data: profile } = auth.user
+      ? await supabase.from("profiles").select("role, onboarded_at").eq("id", auth.user.id).single()
+      : { data: null };
+    if (profile && !profile.onboarded_at && profile.role !== "admin") return NextResponse.redirect(`${origin}/welcome`);
+  }
+
   return NextResponse.redirect(`${origin}${next}`);
 }
