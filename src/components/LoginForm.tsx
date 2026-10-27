@@ -5,17 +5,18 @@ import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Heart, User } from "@/components/Icons";
 
-type Mode = "login" | "register" | "magic";
+type Mode = "login" | "register";
 
 function friendly(message: string) {
-  if (/invalid login credentials/i.test(message)) return "That email and password don't match. Try again, or use a magic link.";
-  if (/email not confirmed/i.test(message)) return "Please confirm your email first: click the link we sent when you signed up.";
-  if (/rate limit|too many/i.test(message)) return "Too many emails sent just now. Please wait a few minutes and try again.";
-  if (/password should be at least/i.test(message)) return "Password must be at least 8 characters.";
   if (/signups not allowed|user not found/i.test(message)) return "No account found for that email. Sign up instead.";
+  if (/rate limit|too many|security purposes/i.test(message)) return "Too many emails sent just now. Please wait a minute and try again.";
+  if (/expired|invalid/i.test(message)) return "That code is wrong or has expired. Check the latest email, or send a new one.";
+  if (/error sending/i.test(message)) return "We couldn't send the email just now. Please try again in a few minutes.";
   return message;
 }
 
+// Passwordless: we email a sign-in link plus a 6-digit code. The code works on any device,
+// which helps when the email is opened on a phone but the site is open on a laptop.
 export function LoginForm({
   next,
   initialMode,
@@ -23,7 +24,7 @@ export function LoginForm({
   initialError,
 }: {
   next: string;
-  initialMode: "login" | "register";
+  initialMode: Mode;
   initialRole: "client" | "carer";
   initialError?: string;
 }) {
@@ -33,61 +34,45 @@ export function LoginForm({
   const [role, setRole] = useState(initialRole);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(initialError ?? "");
-  const [sentTo, setSentTo] = useState<{ email: string; kind: "register" | "magic" } | null>(null);
+  const [sentTo, setSentTo] = useState<string | null>(null);
 
-  const callbackUrl = () => `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
+  async function send(e?: React.FormEvent) {
+    e?.preventDefault();
     setBusy(true);
     setError("");
-
-    if (mode === "login") {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        setError(friendly(error.message));
-        setBusy(false);
-        return;
-      }
-      router.replace(next);
-      router.refresh();
-      return;
-    }
-
-    if (mode === "register") {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { emailRedirectTo: callbackUrl(), data: { full_name: name.trim(), role } },
-      });
-      setBusy(false);
-      if (error) return setError(friendly(error.message));
-      // With email confirmation turned off in Supabase, the user is signed in straight away.
-      if (data.session) {
-        router.replace(next);
-        router.refresh();
-        return;
-      }
-      setSentTo({ email, kind: "register" });
-      return;
-    }
-
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: callbackUrl(), shouldCreateUser: false },
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+        shouldCreateUser: mode === "register",
+        data: mode === "register" ? { full_name: name.trim(), role } : undefined,
+      },
     });
     setBusy(false);
     if (error) return setError(friendly(error.message));
-    setSentTo({ email, kind: "magic" });
+    setSentTo(email);
+  }
+
+  async function verify(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError("");
+    const { error } = await supabase.auth.verifyOtp({ email: sentTo!, token: code.trim(), type: "email" });
+    if (error) {
+      setBusy(false);
+      return setError(friendly(error.message));
+    }
+    router.replace(next);
+    router.refresh();
   }
 
   const heading = (
     <div className="text-center">
       <p className="eyebrow">{mode === "register" ? "{ Join ERMO }" : "{ Welcome back }"}</p>
-      <h1 className="display mt-3 text-4xl">{mode === "register" ? "Create your account" : "Log in"}</h1>
+      <h1 className="display mt-3 text-4xl">{sentTo ? "Check your email" : mode === "register" ? "Create your account" : "Log in"}</h1>
     </div>
   );
 
@@ -95,17 +80,45 @@ export function LoginForm({
     return (
       <>
         {heading}
-        <div className="card mt-8 px-6 py-10 text-center">
-          <p className="chip">Check your inbox</p>
-          <p className="mt-4 text-sm leading-relaxed">
-            We&apos;ve sent a {sentTo.kind === "register" ? "verification" : "sign-in"} link to <strong>{sentTo.email}</strong>.
+        <div className="card mt-8 p-6 sm:p-8">
+          <p className="text-center text-sm leading-relaxed">
+            We&apos;ve sent a sign-in link to <strong>{sentTo}</strong>.
             <br />
-            Open it on this device to {sentTo.kind === "register" ? "activate your account" : "log in"}.
+            Tap the link, or enter the 6-digit code from the email below.
           </p>
-          <p className="mt-3 text-xs text-slate">No email after a minute? Check your spam folder.</p>
-          <button onClick={() => setSentTo(null)} className="mt-6 text-sm text-brand hover:underline">
-            Use a different email
-          </button>
+          <form onSubmit={verify} className="mt-6 space-y-4">
+            <label className="block">
+              <span className="label">6-digit code</span>
+              <input
+                className="field text-center text-2xl tracking-[0.5em]"
+                value={code}
+                onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                placeholder="000000"
+                required
+                minLength={6}
+              />
+            </label>
+            {error && <p role="alert" className="text-sm text-danger">{error}</p>}
+            <button type="submit" disabled={busy || code.length < 6} className="btn w-full">
+              {busy ? "Checking…" : "Continue"}
+            </button>
+          </form>
+          <p className="mt-4 text-center text-xs text-slate">No email after a minute? Check your spam folder.</p>
+          <div className="mt-4 flex justify-center gap-6 text-sm">
+            <button onClick={() => send()} disabled={busy} className="text-brand hover:underline">Send a new email</button>
+            <button
+              onClick={() => {
+                setSentTo(null);
+                setCode("");
+                setError("");
+              }}
+              className="text-slate hover:text-ink"
+            >
+              Use a different email
+            </button>
+          </div>
         </div>
       </>
     );
@@ -116,26 +129,23 @@ export function LoginForm({
       {heading}
       <div className="card mt-8 p-6 sm:p-8">
         <div className="mb-6 grid grid-cols-2 rounded-full bg-mist p-1" role="tablist">
-          {(["login", "register"] as const).map((m) => {
-            const on = mode === m || (m === "login" && mode === "magic");
-            return (
-              <button
-                key={m}
-                role="tab"
-                aria-selected={on}
-                onClick={() => {
-                  setMode(m);
-                  setError("");
-                }}
-                className={`h-10 rounded-full text-sm font-medium transition-colors ${on ? "bg-white text-ink shadow-sm" : "text-slate hover:text-ink"}`}
-              >
-                {m === "login" ? "Log in" : "Sign up"}
-              </button>
-            );
-          })}
+          {(["login", "register"] as const).map((m) => (
+            <button
+              key={m}
+              role="tab"
+              aria-selected={mode === m}
+              onClick={() => {
+                setMode(m);
+                setError("");
+              }}
+              className={`h-10 rounded-full text-sm font-medium transition-colors ${mode === m ? "bg-white text-ink shadow-sm" : "text-slate hover:text-ink"}`}
+            >
+              {m === "login" ? "Log in" : "Sign up"}
+            </button>
+          ))}
         </div>
 
-        <form onSubmit={submit} className="space-y-4">
+        <form onSubmit={send} className="space-y-4">
           {mode === "register" && (
             <>
               <fieldset>
@@ -155,20 +165,6 @@ export function LoginForm({
             <span className="label">Email</span>
             <input className="field" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
           </label>
-          {mode !== "magic" && (
-            <label className="block">
-              <span className="label">Password</span>
-              <input
-                className="field"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={8}
-                autoComplete={mode === "register" ? "new-password" : "current-password"}
-              />
-            </label>
-          )}
 
           {error && (
             <p role="alert" className="text-sm text-danger">
@@ -177,23 +173,10 @@ export function LoginForm({
           )}
 
           <button type="submit" disabled={busy} className="btn w-full">
-            {busy ? "Please wait…" : mode === "login" ? "Log in" : mode === "register" ? "Create account" : "Email me a magic link"}
+            {busy ? "Sending…" : mode === "register" ? "Create account" : "Email me a sign-in link"}
           </button>
         </form>
-
-        {mode !== "register" && (
-          <p className="mt-5 text-center text-sm">
-            <button
-              onClick={() => {
-                setMode(mode === "magic" ? "login" : "magic");
-                setError("");
-              }}
-              className="text-brand hover:underline"
-            >
-              {mode === "magic" ? "Log in with a password instead" : "Forgot your password? Use a magic link"}
-            </button>
-          </p>
-        )}
+        <p className="mt-5 text-center text-xs text-slate">No password needed. We&apos;ll email you a link and a code.</p>
       </div>
     </>
   );

@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
   if (error) {
     const message = /code verifier|both auth code and code verifier/i.test(error)
-      ? "Please open the email link in the same browser you signed up with, or request a new magic link."
+      ? "That link only works in the browser where you asked for it. Enter the 6-digit code from the email there instead, or request a new link here."
       : /expired|invalid/i.test(error)
         ? "That link has expired or was already used. Request a new one below."
         : error;
